@@ -1,7 +1,7 @@
 /**
  * iv-viewer - 2.1.1
  * Author : Sudhanshu Yadav
- * Copyright (c) 2019, 2021 to Sudhanshu Yadav, released under the MIT license.
+ * Copyright (c) 2019, 2022 to Sudhanshu Yadav, released under the MIT license.
  * git+https://github.com/s-yadav/iv-viewer.git
  */
 
@@ -1163,7 +1163,7 @@ function () {
 
       this.hideSnapView();
 
-      var onImageLoad = function onImageLoad() {
+      var onImageLoad = function onImageLoad(ev) {
         // hide the iv loader
         css(ivLoader, {
           display: 'none'
@@ -1178,7 +1178,9 @@ function () {
         } // set loaded flag to true
 
 
-        _this9._state.loaded = true; // calculate the dimension
+        _this9._state.loaded = true; // save initial ratio to state
+
+        _this9._state.ratio = ev.target.width / ev.target.height; // calculate the dimension
 
         _this9._calculateDimensions(); // dispatch image load event
 
@@ -1192,7 +1194,7 @@ function () {
       };
 
       if (imageLoaded(image)) {
-        onImageLoad();
+        onImageLoad(image);
       } else {
         this._events.imageLoad = assignEvent(image, 'load', onImageLoad);
       }
@@ -1253,7 +1255,7 @@ function () {
 
       var imgWidth;
       var imgHeight;
-      var ratio = imageWidth / imageHeight;
+      var ratio = this._state.ratio || imageWidth / imageHeight;
       imgWidth = imageWidth > imageHeight && contHeight >= contWidth || ratio * contHeight > contWidth ? contWidth : ratio * contHeight;
       imgHeight = imgWidth / ratio;
       this._state.imageDim = {

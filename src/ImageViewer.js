@@ -613,7 +613,7 @@ class ImageViewer {
     // hide snap view if open
     this.hideSnapView();
 
-    const onImageLoad = () => {
+    const onImageLoad = (ev) => {
       // hide the iv loader
       css(ivLoader, { display: 'none' });
 
@@ -628,6 +628,9 @@ class ImageViewer {
       // set loaded flag to true
       this._state.loaded = true;
 
+      // save initial ratio to state
+      this._state.ratio = ev.target.width / ev.target.height;
+
       // calculate the dimension
       this._calculateDimensions();
 
@@ -641,7 +644,7 @@ class ImageViewer {
     };
 
     if (imageLoaded(image)) {
-      onImageLoad();
+      onImageLoad(image);
     } else {
       this._events.imageLoad = assignEvent(image, 'load', onImageLoad);
     }
@@ -702,7 +705,7 @@ class ImageViewer {
     let imgWidth;
     let imgHeight;
 
-    const ratio = imageWidth / imageHeight;
+    const ratio = this._state.ratio || (imageWidth / imageHeight);
 
     imgWidth = (imageWidth > imageHeight && contHeight >= contWidth) || ratio * contHeight > contWidth
       ? contWidth
